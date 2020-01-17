@@ -1,13 +1,17 @@
 (ns csv-a-grafo.core
   (:require [clojure.data.csv :as csv]
             [clojure.string :as str]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json]
+            [clojure.pprint :refer [pprint]]))
 
 (defn format-node-name [node]
   (-> node str/trim str/lower-case))
-(defn spy [x] (clojure.pprint/pprint x) x)
+
+(defn spy [x] (pprint x) x)
+
 (def graph
-  (->> (csv/read-csv (slurp "resources/construccion-de-conceptos-whitehead-james.csv"))
+  (->> (csv/read-csv
+        (slurp "resources/construccion-de-conceptos-whitehead-james.csv"))
        vec
        (#(subvec % 1))
        (mapcat (fn [[concept _ _ contrapositions]]
@@ -26,5 +30,6 @@
            {:links links
             :nodes nodes}))))
 
-(spit "resources/graphs/construccion-de-conceptos-whitehead-james.json"
-      (json/write-str graph))
+(comment
+  (spit "resources/graphs/construccion-de-conceptos-whitehead-james.json"
+        (json/write-str graph)))
